@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = "generic/ubuntu1804"
+	config.disksize.size = '50GB'
+	config.vm.hostname = "vagrant-box"
+	config.vm.define "vagrant-box"
+	config.vm.network "private_network", ip:"44.44.44.4"
+	config.vm.network "fowarded_port", guest:8000, host:8000
+#   config.ssh.username = "ubuntu"
+#   config.ssh.password = "ubuntu"
+#   config.ssh.insert_key = false
+#   config.vm.provision "file", source: "/Users/<username>/.ssh/id_rsa.pub", destination: "/home/ubuntu/.ssh/authorized_keys"
+    config.vm.provision "shell", inline: <<-EOC
+	  sudo service ssh restart
+	  
+	config.vm.provision :shell, inline: "chsh -s /bin/zsh vagrant"
+	
+	
+	EOC
+	config.vm.synced_folder "~/Code", "/home/vagrant/Code"
+	config.vm.synced_folder "~/.aws", "/home/vagrant/.aws"
+	config.vm.synced_folder "~/.ssh", "/home/vagrant/.ssh"
+	
+	
+	config.vm.provider "virtualbox" do |v|
+	  v.memory = 4096
+	  v.cpus = 2
+	  v.customize ["modifyvm", :id, "--vram", "32"]
+	end
+end
